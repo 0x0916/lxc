@@ -370,20 +370,19 @@ static int ls_get(struct ls **m, size_t *size, const struct lxc_arguments *args,
 	struct ls *l = NULL;
 	struct lxc_container *c = NULL;
 	size_t i;
+	regex_t preg;
+	if (args->ls_filter || args->argc == 1) {
+		tmp = args->ls_filter ? args->ls_filter : args->argv[0];
+		check = regcomp(&preg, tmp, REG_NOSUB | REG_EXTENDED);
+		if (check == REG_ESPACE) /* we're out of memory */
+			goto out;
+	}
 	for (i = 0; i < (size_t)num; i++) {
 		char *name = containers[i];
 
 		/* Filter container names by regex the user gave us. */
 		if (args->ls_filter || args->argc == 1) {
-			regex_t preg;
-			tmp = args->ls_filter ? args->ls_filter : args->argv[0];
-			check = regcomp(&preg, tmp, REG_NOSUB | REG_EXTENDED);
-			if (check == REG_ESPACE) /* we're out of memory */
-				goto out;
-			else if (check != 0)
-				continue;
 			check = regexec(&preg, name, 0, NULL, 0);
-			regfree(&preg);
 			if (check != 0)
 				continue;
 		}
@@ -565,8 +564,10 @@ static int ls_get(struct ls **m, size_t *size, const struct lxc_arguments *args,
 put_and_next:
 		lxc_container_put(c);
 	}
-	ret = 0;
+	if (args->ls_filter || args->argc == 1)
+		regfree(&preg);
 
+	ret = 0;
 out:
 	ls_free_arr(containers, num);
 	free(path);
