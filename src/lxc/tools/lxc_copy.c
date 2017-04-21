@@ -349,7 +349,7 @@ static char *set_mnt_entry(struct mnts *m)
 			goto err;
 	} else if (m->mnt_type == LXC_MNT_BIND) {
 		len = strlen("  none bind,optional,, 0 0") +
-		      strlen(is_dir(m->src) ? "create=dir" : "create=file") +
+		      strlen(dir_exists(m->src) ? "create=dir" : "create=file") +
 		      strlen(m->src) + strlen(m->dest) + strlen(m->options) + 1;
 
 		mntentry = malloc(len);
@@ -358,7 +358,7 @@ static char *set_mnt_entry(struct mnts *m)
 
 		ret = snprintf(mntentry, len, "%s %s none bind,optional,%s,%s 0 0",
 				m->src,	m->dest, m->options,
-				is_dir(m->src) ? "create=dir" : "create=file");
+				dir_exists(m->src) ? "create=dir" : "create=file");
 		if (ret < 0 || (size_t)ret >= len)
 			goto err;
 	}

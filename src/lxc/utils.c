@@ -1258,7 +1258,6 @@ char *choose_init(const char *rootfs)
 	const char *empty = "",
 		   *tmp;
 	int ret, env_set = 0;
-	struct stat mystat;
 
 	if (!getenv("PATH")) {
 		if (setenv("PATH", "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", 0))
@@ -1290,9 +1289,7 @@ char *choose_init(const char *rootfs)
 		ERROR("pathname too long");
 		goto out1;
 	}
-
-	ret = stat(retv, &mystat);
-	if (ret == 0)
+	if (file_exists(retv))
 		return retv;
 
 	ret = snprintf(retv, PATH_MAX, "%s/%s/%s", tmp, LXCINITDIR, "/lxc/lxc-init");
@@ -1300,9 +1297,7 @@ char *choose_init(const char *rootfs)
 		ERROR("pathname too long");
 		goto out1;
 	}
-
-	ret = stat(retv, &mystat);
-	if (ret == 0)
+	if (file_exists(retv))
 		return retv;
 
 	ret = snprintf(retv, PATH_MAX, "%s/usr/lib/lxc/lxc-init", tmp);
@@ -1310,8 +1305,7 @@ char *choose_init(const char *rootfs)
 		ERROR("pathname too long");
 		goto out1;
 	}
-	ret = stat(retv, &mystat);
-	if (ret == 0)
+	if (file_exists(retv))
 		return retv;
 
 	ret = snprintf(retv, PATH_MAX, "%s/sbin/lxc-init", tmp);
@@ -1319,8 +1313,7 @@ char *choose_init(const char *rootfs)
 		ERROR("pathname too long");
 		goto out1;
 	}
-	ret = stat(retv, &mystat);
-	if (ret == 0)
+	if (file_exists(retv))
 		return retv;
 
 	/*
@@ -1338,8 +1331,7 @@ char *choose_init(const char *rootfs)
 		WARN("Nonsense - name /lxc.init.static too long");
 		goto out1;
 	}
-	ret = stat(retv, &mystat);
-	if (ret == 0)
+	if (file_exists(retv))
 		return retv;
 
 out1:
@@ -1359,15 +1351,6 @@ int print_to_file(const char *file, const char *content)
 		ret = -1;
 	fclose(f);
 	return ret;
-}
-
-int is_dir(const char *path)
-{
-	struct stat statbuf;
-	int ret = stat(path, &statbuf);
-	if (ret == 0 && S_ISDIR(statbuf.st_mode))
-		return 1;
-	return 0;
 }
 
 /*

@@ -2057,7 +2057,7 @@ out:
 static int config_includefile(const char *key, const char *value,
 			  struct lxc_conf *lxc_conf)
 {
-	if (is_dir(value))
+	if (dir_exists(value))
 		return do_includedir(value, lxc_conf);
 
 	return lxc_config_read(value, lxc_conf, true);

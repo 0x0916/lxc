@@ -22,14 +22,7 @@
  */
 #define _GNU_SOURCE
 #include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <libgen.h>
-#include <string.h>
 #include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/param.h>
 
 #include "caps.h"
 #include "lxc.h"
@@ -71,6 +64,7 @@ static int my_parser(struct lxc_arguments* args, int c, char* arg)
 	case 'g':
 		if (lxc_safe_uint(arg, &args->gid) < 0)
 			return -1;
+		break;
 	}
 	return 0;
 }
