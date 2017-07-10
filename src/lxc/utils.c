@@ -611,7 +611,7 @@ char *lxc_string_replace(const char *needle, const char *replacement, const char
 	size_t replacement_len = strlen(replacement);
 	size_t needle_len = strlen(needle);
 
-	/* should be executed exactly twice */
+	/* should be executed exactly twice 第一遍计算len的长度，第二遍进行替换*/
 	while (len == -1 || result == NULL) {
 		char *p;
 		char *last_p;
@@ -625,7 +625,7 @@ char *lxc_string_replace(const char *needle, const char *replacement, const char
 		}
 
 		len = 0;
-
+		// 将所有的needle替换为replacement
 		for (last_p = (char *)haystack, p = strstr(last_p, needle); p; last_p = p, p = strstr(last_p, needle)) {
 			part_len = (ssize_t)(p - last_p);
 			if (result && part_len > 0)

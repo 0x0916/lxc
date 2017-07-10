@@ -39,7 +39,7 @@ extern struct cgroup_ops *cgm_ops_init(void);
 
 __attribute__((constructor))
 void cgroup_ops_init(void)
-{
+{ // 这里的打印并不能输出
 	if (ops) {
 		INFO("cgroup driver %s", ops->name);
 		return;

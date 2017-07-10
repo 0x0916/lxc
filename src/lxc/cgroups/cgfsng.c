@@ -1177,6 +1177,7 @@ static void *cgfsng_init(const char *name)
 	}
 	d->cgroup_pattern = must_copy_string(cgroup_pattern);
 
+	// ?? 这里tty就出现问题了
 	if (lxc_cgfsng_debug)
 		lxc_cgfsng_print_debuginfo(d);
 
@@ -1406,7 +1407,7 @@ out_free:
 
 static bool cgfsng_enter(void *hdata, pid_t pid)
 {
-	char pidstr[25];
+	char pidstr[25];	// ? 25
 	int i, len;
 
 	len = snprintf(pidstr, 25, "%d", pid);
